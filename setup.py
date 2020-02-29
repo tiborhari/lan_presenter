@@ -1,13 +1,15 @@
 from os.path import dirname, join
 from setuptools import setup
 
+from lan_presenter import __version__
+
 with open(join(dirname(__file__), 'README.md')) as readme_file:
     long_description = readme_file.read()
 
 
 setup(
     name='lan-presenter',
-    version='0.1.0',
+    version=__version__,
     description='Presenter remote control over local network connection',
     long_description=long_description,
     long_description_content_type='Description-Content-Type: text/markdown; '
@@ -15,13 +17,11 @@ setup(
     author='Tibor Hári',
     author_email='hartib@gmail.com',
     url='https://github.com/tiborhari/lan-presenter/',
-    py_modules=['lan_presenter'],
-    data_files=['index.html'],
-    package_data={'django_admin_reset': ['templates/admin/*.html',
-                                         'locale/*/LC_MESSAGES/*.[mp]o']},
+    packages=['lan_presenter'],
+    package_data={'lan_presenter': ['index.html']},
     entry_points={
         'console_scripts': [
-            'lan_presenter=lan_presenter:main',
+            'lan_presenter=lan_presenter.__main__:main',
         ],
     },
     python_requires='>=3.6, <4',
