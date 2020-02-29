@@ -12,8 +12,7 @@ setup(
     version=__version__,
     description='Presenter remote control over local network connection',
     long_description=long_description,
-    long_description_content_type='Description-Content-Type: text/markdown; '
-                                  'charset=UTF-8; variant=GFM',
+    long_description_content_type='text/markdown',
     author='Tibor Hári',
     author_email='hartib@gmail.com',
     url='https://github.com/tiborhari/lan-presenter/',
