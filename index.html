@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LAN Presenter</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+      }
+      button, div {
+        box-sizing: border-box;
+      }
+      .main {
+        align-content: space-around;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        max-height: 450px;
+        max-width: 100%;
+        width: 450px
+      }
+      .row {
+        align-content: space-around;
+        display: flex;
+        flex: 1;
+        width: 100%;
+      }
+      button, .placeHolder {
+        border-color: transparent;
+        border-style: solid;
+        border-width: 2px;
+        display: block;
+        flex: 1;
+        margin: 2%;
+      }
+      button {
+        background: transparent;
+        border-color: #444;
+        color: #444;
+        cursor: pointer;
+        font-family: Helvetica, Arial;
+        font-size: 30px;
+        outline: none;
+        padding: 0;
+        text-align: center;
+        text-transform: none;
+      }
+      button:hover, button:focus, button:active {
+        outline: none;
+      }
+      button::-moz-focus-inner {
+        border: 0;
+      }
+
+      #F5 {
+        background-color: #6fa;
+      }
+      #period {
+        background-color: #444;
+        color: #fff;
+      }
+      #pageUp, #pageDown {
+        background-color: #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="row">
+        <button id="F5">F5</button>
+        <button id="up">&#x25b2;<br/>Up</button>
+        <button id="pageUp">&#x21a5; Page<br/>Up</button>
+      </div>
+      <div class="row">
+        <button id="left">&#x25c0; Left</button>
+        <div class="placeHolder"></div>
+        <button id="right">Right &#x25b6;</button>
+      </div>
+      <div class="row">
+        <button id="period">Blank<br/>(&ldquo;<strong>.</strong>&rdquo;)</button>
+        <button id="down">Down<br/>&#x25bc;</button>
+        <button id="pageDown">&#x21a7; Page<br/>Down</button>
+      </div>
+    </div>
+    <script>
+      const fetchWithTimeout = (url, key) => Promise.race([
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key })
+        }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2000))
+      ]);
+      for (let button of document.getElementsByTagName('button')) {
+        button.addEventListener(
+          'click', () => fetchWithTimeout('/press', button.id),
+        );
+      }
+    </script>
+  </body>
+</html>
