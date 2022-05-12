@@ -3,8 +3,11 @@ from argparse import ArgumentParser
 from logging import basicConfig, getLogger
 from pkg_resources import resource_string
 from platform import system
+from socket import AF_INET, SOCK_DGRAM, socket
+from sys import stdout
 
 from aiohttp.web import Application, Response, run_app
+from qrcode import QRCode
 
 logger = getLogger()
 is_windows = system() == 'Windows'
@@ -138,14 +141,60 @@ def parse_args(argv=None):
         description='Presenter remote control over local network connection.')
     parser.add_argument('--host', default='0.0.0.0')
     parser.add_argument('--port', default='54321')
-    parser.add_argument('--verbose', action='store_true')
+    parser.add_argument(
+        '--verbose', action='store_true', help='Show more detailed logging')
+    parser.add_argument(
+        '--no-qr', action='store_true', help='Do not show the QR code')
+    parser.add_argument(
+        '--qr-host', help='Override the hostname in the QR code')
     return parser.parse_args(argv)
+
+
+def get_ip_address():
+    # Copied from https://stackoverflow.com/a/28950776
+    s = socket(AF_INET, SOCK_DGRAM)
+    s.settimeout(0)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        return s.getsockname()[0]
+    except Exception:
+        return '127.0.0.1'
+    finally:
+        s.close()
+
+
+def print_url(url):
+    print(f'Open this URL: {url}')
+
+
+def print_qr_code(url):
+    qr = QRCode()
+    qr.add_data(url)
+    qr.print_ascii(out=stdout, invert=True)
+    print(f'Scan the QR code or open this URL: {url}')
+
+
+def show_url_info(args):
+    if args.qr_host:
+        ip = args.qr_host
+    elif args.host == '0.0.0.0':
+        ip = get_ip_address()
+    else:
+        ip = args.host
+    url = f'http://{ip}:{args.port}'
+    if ip in ['127.0.0.1', 'localhost'] or args.no_qr:
+        # There is no point of a QR code on localhost
+        print_url(url)
+    else:
+        print_qr_code(url)
 
 
 def main(argv=None):
     args = parse_args(argv)
     basicConfig(level='DEBUG' if args.verbose else 'INFO')
     app = create_app()
+    show_url_info(args)
     run_app(app, host=args.host, port=args.port)
 
 

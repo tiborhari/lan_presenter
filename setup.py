@@ -27,6 +27,7 @@ setup(
     install_requires=[
         'aiohttp~=3.8.1',
         'keyboard~=0.13.5',
+        'qrcode~=7.3.1'
     ],
     extras_require={
         'dev': [
