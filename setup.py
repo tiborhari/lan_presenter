@@ -25,8 +25,8 @@ setup(
     },
     python_requires='>=3.6, <4',
     install_requires=[
-        'aiohttp>=3.6.2,<3.7',
-        'keyboard>=0.13.4,<0.14',
+        'aiohttp~=3.8.1',
+        'keyboard~=0.13.5',
     ],
     extras_require={
         'dev': [
